@@ -1,0 +1,60 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Your Paper}
+\author{You}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Your abstract.
+\end{abstract}
+
+\section{Introduction}
+
+Your introduction goes here! Simply start writing your document and use the Recompile button to view the updated PDF preview. Examples of commonly used commands and features are listed below, to help you get started.
+
+Once you're familiar with the editor, you can find various project settings in the Overleaf menu, accessed via the button in the very top left of the editor. To view tutorials, user guides, and further documentation, please visit our \href{https://www.overleaf.com/learn}{help library}, or head to our plans page to \href{https://www.overleaf.com/user/subscription/plans}{choose your plan}.
+
+\section{Literature Review \& System Positioning}
+
+\subsection{Analysis of Existing Cybersecurity RAG Frameworks}
+
+The paper on CyberBOT demonstrates ways to solve the reliability issue in cybersecurity education by using ontology-grounded RAG.It provides an inspiration that a standard RAG system can easily make mistakes in areas that require high accuracy, such as cybersecurity. Therefore, a strict structured control over the retrieved content is necessary. Besides,the CyberRAG study has also shown that using agentic RAG can automatically classify cyber-attacks and generate reports. An advanced RAG system should not only be able to read context, but also match the most accurate content from the knowledge base according to practitioner needs. Regarding the evaluation framework, RAGAS suggests using an LLM to automatically evaluate three core RAG metrics, which are answer relevancy, faithfulness, and context relevancy. Although RAGAS is widely adopted, it highly relies on specific instruction-tuned prompts without ground-truth, which often causes incorrect formatting, unstable ratings, and API connection issues.
+
+\subsection{Methodological Inspiration \& Positioning}
+
+This project focuses on the secure configuration for the Azure cloud rather than conceptual cybersecurity knowledge. The Azure cloud is highly popular across enterprises of all sizes, regardless of whether they are large, medium, or small. However, because its official documentation is filled with a large number of precise proper nouns and complex configuration rules, such as Microsoft Entra ID, Azure Key Vault, TLS 1.2, HTTPS-only models, and NSG rules, practitioners who are unfamiliar with these details may leave the entire system in an insecure state, regardless of how secure the default design might be. Therefore, implementing a RAG system to search for Azure cloud security information from official documents can effectively help practitioners set up their cloud projects securely.
+
+Naive RAG is the traditional way to retrieve data from a knowledge base. It searches for relevant information by calculating semantic similarity. However, Naive RAG can get confused by Azure services that are totally different but have similar names during calculation, such as mistaking Identity Server's HTTPS settings for Azure App Service settings. This project has decided to implement a hybrid RAG structure to see whether it can provide better results. The design of the hybrid RAG uses dense embeddings to extract the semantics of practitioner queries, combined with a BM25 keyword retriever to perform exact token matching for Azure terms. To compare both RAG systems, DeepEval was used to evaluate system performance by calculating the three core metrics, rather than using RAGAS. This study also researches whether the hybrid structure can make a substantial contribution to the quality of generation for the Azure cloud secure configuration topic.
+
+\section{Methodology \& System Design}
+
+\subsection{(Knowledge Base Setup \& Data Pipeline}
+
+The Azure cloud provides well-structured documents for guiding users to implement configurations in their cloud projects. This project connected to the Azure open-source repository by using the GitHub API. By scanning the entire directory, all markdown documents containing the keywords "security" and "baseline" were filtered. Eventually, 323 high-quality official security technical archives were downloaded and stored locally for further processing.The downloaded documents contain many heading levels with markdown "\#", "\#\#" and "\#\#\#", which can influence the retrieval results. Therefore, this project used the "MarkdownHeaderTextSplitter" component from LangChain to perform the first layer of structured segmentation, and then used the "RecursiveCharacterTextSplitter" to do the second layer of segmentation. A chunk size of 1000 was used for the segmentation as it can fully include a well-structured Azure document model, with a chunk overlap of 150 to ensure that the end of the previous block is sufficiently related to the beginning of the next block. To reduce noise from the documents, a blacklist filter was also implemented to remove irrelevant sections, such as "next steps", "feedback", and "see also." After the cleaning and filtering, a total number of 6160 high-quality text blocks were reserved and made ready for the next process.
+
+\subsection{Architectural Variations of Retrieval Module}
+
+For the embedding model and vector store selection, this project has chosen "BAAI/bge-small-en-v1.5" and "Chroma DB" as the primary technologies. "BAAI/bge-small-en-v1.5" ranks highly on the MTEB leaderboard and is known as a model that can accurately extract the semantics of a query.It has a lower vector dimension and an extremely fast calculation speed, and it also works very well in an English environment like Azure documents, making these features highly suitable for this project. As for "Chroma DB", it is a vector database specially designed for AI applications, which is open-source, free, and easy to set up without complex configurations. Since the documents are segmented by LangChain's tools, the Chroma DB API can connect with the text segmentation and search functions easily.
+
+\subsection{Generation Module \& Prompt Engineering}
+
+
+\bibliographystyle{alpha}
+\bibliography{sample}
+
+\end{document}
