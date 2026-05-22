@@ -33,7 +33,7 @@ Once you're familiar with the editor, you can find various project settings in t
 
 \subsection{Analysis of Existing Cybersecurity RAG Frameworks}
 
-The paper on CyberBOT demonstrates ways to solve the reliability issue in cybersecurity education by using ontology-grounded RAG.It provides an inspiration that a standard RAG system can easily make mistakes in areas that require high accuracy, such as cybersecurity. Therefore, a strict structured control over the retrieved content is necessary. Besides,the CyberRAG study has also shown that using agentic RAG can automatically classify cyber-attacks and generate reports. An advanced RAG system should not only be able to read context, but also match the most accurate content from the knowledge base according to practitioner needs. Regarding the evaluation framework, RAGAS suggests using an LLM to automatically evaluate three core RAG metrics, which are answer relevancy, faithfulness, and context relevancy. Although RAGAS is widely adopted, it highly relies on specific instruction-tuned prompts without ground-truth, which often causes incorrect formatting, unstable ratings, and API connection issues.
+The paper on CyberBOT demonstrates ways to solve the reliability issue in cybersecurity education by using ontology-grounded RAG. It provides an inspiration that a standard RAG system can easily make mistakes in areas that require high accuracy, such as cybersecurity. Therefore, a strict structured control over the retrieved content is necessary. Besides,the CyberRAG study has also shown that using agentic RAG can automatically classify cyber-attacks and generate reports. An advanced RAG system should not only be able to read context, but also match the most accurate content from the knowledge base according to practitioner needs.
 
 \subsection{Methodological Inspiration \& Positioning}
 
@@ -55,9 +55,20 @@ As mentioned previously, Naive RAG and Hybrid RAG were both implemented for perf
 
 \subsection{Generation Module \& Prompt Engineering}
 
-This project selects "Meta-Llama-3-8B-Instruct" as the system generator. This model is instruction-tuned and optimized with RLHF, giving it a strong prompt-following capability to strictly adhere to instructions—specifically, to generate exactly three concise guidelines based only on the provided context, thereby ensuring the precision and refinement of the output. When handling long Azure documents exceeding thousands of words, it will not be distracted by irrelevant text or prone to over-generation. This model was also trained on vast technical documentation, extensive codebases, and cybersecurity knowledge, making it highly suitable for understanding structured cloud security code and domain-specific technical terms.
+This project selects "Meta-Llama-3-8B-Instruct" as the system generator. This model is instruction-tuned and optimized with RLHF, giving it a strong prompt-following capability to strictly adhere to instructions, specifically, to generate exactly three concise guidelines based only on the provided context, thereby ensuring the precision and refinement of the output. When handling long Azure documents exceeding thousands of words, it will not be distracted by irrelevant text or prone to over-generation. This model was also trained on vast technical documentation, extensive codebases, and cybersecurity knowledge, making it highly suitable for understanding structured cloud security code and domain-specific technical terms.
 
-To position the model as a senior Azure cloud security architect, this  project has design a rigorous system prompt. The prompt included a closed-world assumption that required the model can only answer the question based on the provided top-3 text chunks. If it cannot find the answer from the top-3 text chunks, it must response "do not have enough information", to ensure no hallucination exist. When the model give the final answer, the response must generate 3 concise and actionable guidelines, the practitioner can then follow the guidelines and process.
+To position the model as a senior Azure cloud security architect, this project has designed a rigorous system prompt. The prompt included a closed-world assumption that required the model to only answer the question based on the provided top-3 text chunks. If it cannot find the answer from the top-3 text chunks, it must respond with "I do not have enough information" to ensure no hallucination exists. When the model gives the final answer, the response must contain 3 concise and actionable guidelines that practitioners can follow.
+
+\section{Evaluation Setup \& Metric Framework}
+
+\subsection{Evaluation Dataset Setup}
+
+There are 10 practitioner-style queries related to Azure cloud security were deigned for the evaluation purpose. These 10 queries included critical security scenarios in real world cloud-based operations and maintenance. For instance, monitoring abnormal logins with Microsoft Entra ID, key management and rotation in Azure Key Vault, preventing SQL injection and blocking public network access in Azure SQL Repository, and enforcing HTTPS and TLS 1.2+ security configurations for Azure App Service. The evaluation mode is reference-free that does not require any ground-truth, and rating is based entirely on the logical relationship between the context retrieved by RAG and the generated answer.
+
+\subsection{DeepEval}
+
+The evaluation logic of the RAGAS framework highly relies on the judge model's identification of vagueness and abstract reasoning, especially in reference-free mode. When handling domain-specific scenarios containing extremely precise hardware commands, architecture configurations, and Azure cloud deployment parameters, RAGAS becomes overgeneralized due to a lack of criteria-based granularity. official Azure documentation contains many non-semantic elements, such as title syntax, code comments, and NOTE blocks. These contexts will easily cause the ratings to show an inexplicable and drastic decline due to the algorithm design of RAGAS, making it unsuitable for the deep error analysis of this project.
+
 
 
 \bibliographystyle{alpha}
