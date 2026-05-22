@@ -77,7 +77,7 @@ There are three core evaluation metrics used to evaluate the RAG system. The ans
 
 \subsection{Implementation of Custom Judge LLM}
 
-
+This project utilizes the Llama-3.3-70B-Versatile model as the evaluator model. According to academic norms of the LLM-as-a-Judge paradigm, the parameter scale of the judge model should be significantly larger than that of the generation model. UUtilizing a 70B large model to evaluate an 8B small model ensures that the ratings possess sufficient objectivity and authoritative review capabilities. This substantial parameter advantage also prevents hallucinations when processing the Chain-of-Thought protocols of G-Eval. Most importantly, this model is accessible via providers like Groq without API costs, making it highly budget-friendly and suitable for this project.
 
 \bibliographystyle{alpha}
 \bibliography{sample}
